@@ -2,10 +2,13 @@ package com.example.user.product_ready_features.product_ready_features.services;
 
 import com.example.user.product_ready_features.product_ready_features.dtos.ProductDto;
 import com.example.user.product_ready_features.product_ready_features.entities.ProductEntity;
+import com.example.user.product_ready_features.product_ready_features.entities.User;
 import com.example.user.product_ready_features.product_ready_features.exceptions.ResourceNotFoundException;
 import com.example.user.product_ready_features.product_ready_features.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -33,6 +37,10 @@ public class ProductService {
     }
 
     public ProductDto getProductById(Long id) {
+      User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+      log.info("user {}", user);
+
         ProductEntity productEntity = productRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Product not found with id: "+id));
 
