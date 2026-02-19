@@ -33,7 +33,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).
-                orElseThrow(() -> new ResourceNotFoundException("User not found with email: "+username));
+                orElseThrow(() -> new BadCredentialsException("User not found with email: "+username));
     }
 
     public User getUserById(Long userId){
