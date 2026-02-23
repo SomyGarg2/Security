@@ -1,6 +1,7 @@
 package com.example.user.product_ready_features.product_ready_features.configs;
 
 import com.example.user.product_ready_features.product_ready_features.filters.JwtAuthFilter;
+import com.example.user.product_ready_features.product_ready_features.handlers.Oauth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,12 +26,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final Oauth2SuccessHandler oauth2SuccessHandler;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/products", "/error", "/auth/**").permitAll()
+                        .requestMatchers("/products", "/error", "/auth/**", "/home.html").permitAll()
                         .requestMatchers("/products/**").hasAnyRole("ADMIN")
                         // swagger related endpoints should be accessible without authentication
                         .requestMatchers(
@@ -45,7 +47,11 @@ public class WebSecurityConfig {
                 .csrf(csrfConfig -> csrfConfig.disable())
                 .sessionManagement(sessionConfig -> sessionConfig
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(oauth2Config -> oauth2Config
+                        .failureUrl("/login?error=true")
+                .successHandler(oauth2SuccessHandler)
+                );
 //                .formLogin(Customizer.withDefaults());
 
 
