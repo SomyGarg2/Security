@@ -37,10 +37,6 @@ public class ProductService {
     }
 
     public ProductDto getProductById(Long id) {
-      User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-      log.info("user {}", user);
-
         ProductEntity productEntity = productRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Product not found with id: "+id));
 
